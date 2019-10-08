@@ -52,8 +52,16 @@ function questions(res) {
             if (ans.productID == res[i].item_id) {
                 console.log("You've chosen", res[i].product_name);
                 var chosen = res[i];
-                chosen.stock_quantity--;
-                updateItems(chosen);
+                if (chosen.stock_quantity > ans.units) {
+                    chosen.stock_quantity = chosen.stock_quantity - ans.units;
+                    var cost = parseInt(ans.units) * parseInt(chosen.price);
+                    console.log("Total cost:", cost)
+                    updateItems(chosen);
+                }
+                else {
+                    console.log("Insufficient quantity, there are only", chosen.stock_quantity, " of those");
+                    another();
+                }
             }
         }
 
@@ -65,22 +73,39 @@ function questions(res) {
 function updateItems(chosen) {
     console.log("Updating your stock quantities...\n");
     var query = connection.query(
-      "UPDATE products SET ? WHERE ?",
-      [
-        {
-          stock_quantity: parseFloat(chosen.stock_quantity)
-        },
-        {
-            item_id: parseFloat(chosen.item_id)
+        "UPDATE products SET ? WHERE ?",
+        [
+            {
+                stock_quantity: parseFloat(chosen.stock_quantity)
+            },
+            {
+                item_id: parseFloat(chosen.item_id)
+            }
+        ],
+        function (err, resp) {
+            if (err) throw err;
+            console.log(resp.affectedRows + " items updated!\n");
         }
-      ],
-      function(err, resp) {
-        if (err) throw err;
-        console.log(resp.affectedRows + " items updated!\n");
-      }
     );
+    console.log(query.sql);
+    another()
+};
 
-    // console.log(query.sql);
-    // read();
+function another() {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Do you want to make another purchase?",
+            choices: ["yes", "no"],
+            name: "continue"
+        }
+    ]).then(function (res) {
+        if (res.continue === "yes") {
+            read();
+        }
+        else {
+            connection.end();
+        }
+    })
 
-}
+};
