@@ -33,7 +33,6 @@ function read() {
         }
         questions(res)
     });
-    connection.end();
 };
 
 
@@ -52,8 +51,9 @@ function questions(res) {
         for (i in res) {
             if (ans.productID == res[i].item_id) {
                 console.log("You've chosen", res[i].product_name);
-
-                updateItems(res);
+                var chosen = res[i];
+                chosen.stock_quantity--;
+                updateItems(chosen);
             }
         }
 
@@ -62,27 +62,25 @@ function questions(res) {
     })
 };
 
-function updateItems(res) {
-    console.log("Updating your bid quantities...\n");
-    console.log(res)
-  var query = connection.query(
-    "UPDATE items SET ? WHERE ?",
-    [
-      {
-        stock: res.stock_quantity
-      },
-      {
-          item: res.item_id
+function updateItems(chosen) {
+    console.log("Updating your stock quantities...\n");
+    var query = connection.query(
+      "UPDATE products SET ? WHERE ?",
+      [
+        {
+          stock_quantity: parseFloat(chosen.stock_quantity)
+        },
+        {
+            item_id: parseFloat(chosen.item_id)
+        }
+      ],
+      function(err, resp) {
+        if (err) throw err;
+        console.log(resp.affectedRows + " items updated!\n");
       }
-    ],
-    function(err, resp) {
-      if (err) throw err;
-      console.log(resp.affectedRows + " items updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
-    }
-  );
+    );
 
-  // logs the actual query being run
-  console.log(query.sql);
-  read();
+    // console.log(query.sql);
+    // read();
+
 }
