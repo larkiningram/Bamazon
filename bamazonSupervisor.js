@@ -34,7 +34,9 @@ function menu() {
             viewSales();
         }
         else if (res.menu === "Create New Department") {
+            // console.log("\n")
             createDept();
+            console.log("\n")
 
         }
         else if (res.menu === "Exit") {
@@ -64,7 +66,7 @@ function viewSales() {
         console.table(stuff)
         menu()
     });
-}
+};
 
 function createDept() {
     inquirer.prompt([
@@ -77,11 +79,10 @@ function createDept() {
             name: "cost"
         }
     ]).then(function (add) {
-        console.log(add.cost);
         connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES ('" + add.name + "','" + add.cost + "')", function (err, resp) {
-                if (err) throw err;
-                console.log(resp.affectedRows + " items updated!\n");
-            });
-
+            if (err) throw err;
+            console.log(resp.affectedRows + " items updated!\n");
+            menu();
+        });
     });
-}
+};

@@ -1,6 +1,10 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+// var Pass = require("./pass.js");
 
+// var word = (Pass)
+// console.log(word);
+// console.log(pass.password);
 var connection = mysql.createConnection({
     host: "localhost",
 

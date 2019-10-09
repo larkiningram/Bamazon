@@ -26,7 +26,7 @@ function menu() {
         {
             type: "list",
             message: "What would you like to do?",
-            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"],
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "EXIT"],
             name: "menu"
         }
     ]).then(function (res) {
@@ -41,6 +41,9 @@ function menu() {
         }
         else if (res.menu === "Add New Product") {
             addProduct();
+        }
+        else if (res.menu === "EXIT") {
+            connection.end();
         }
     })
 };
@@ -97,33 +100,20 @@ function addProduct() {
         }
     ]).then(function (add) {
 
-        connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUE (?, ?, ?, ?)",
-            [
-                {
-                    product_name: add.item
-                },
-                {
-                    department_name: add.department
-                },
-                {
-                    price: parseFloat(add.price)
-                },
-                {
-                    stock_quantity: parseFloat(add.stock)
-                }
-            ],
+        connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUE ('" + add.item + "','" + add.department + "'," + parseFloat(add.price) + "," + parseFloat(add.stock) + ")",
             function (err, resp) {
                 if (err) throw err;
                 console.log(resp.affectedRows + " items updated!\n");
+                menu();
             });
 
     });
-    menu();
+
 
 };
 
 function addInventory() {
-
+    // console.log()
     inquirer.prompt([
         {
             messsage: "Which product would you like to restock?",
@@ -147,12 +137,12 @@ function addInventory() {
             function (err, resp) {
                 if (err) throw err;
                 console.log(resp.affectedRows + " items updated!\n");
+                menu();
             }
         );
         console.log(query.sql);
 
     });
 
-    menu();
 
 };
