@@ -1,10 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-// var Pass = require("./pass.js");
 
-// var word = (Pass)
-// console.log(word);
-// console.log(pass.password);
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -26,19 +22,29 @@ connection.connect(function (err) {
 });
 
 function read() {
+    function Table (product_name, price) {
+        // this.dept_id = dept_id;
+        // this.item_id = item_id;
+        this.product_name = product_name;
+        this.price = price;
+    };
+    var stuff = {};
+
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
         for (i in res) {
-            console.log("---------------------------")
-            console.log("PRODUCT ID:", res[i].item_id);
-            console.log("PRODUCT NAME:", res[i].product_name);
-            console.log("PRODUCT PRICE:", res[i].price);
+            var prod = new Table(res[i].product_name, res[i].price);
+            stuff[parseInt(i) + 1] = prod;
+            // console.log("---------------------------")
+            // console.log("PRODUCT ID:", res[i].item_id);
+            // console.log("PRODUCT NAME:", res[i].product_name);
+            // console.log("PRODUCT PRICE:", res[i].price);
         }
+        console.table(stuff);
         questions(res)
     });
 };
-
 
 function questions(res) {
     inquirer.prompt([

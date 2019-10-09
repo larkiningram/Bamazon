@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+var low = 0;
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -49,16 +49,28 @@ function menu() {
 };
 
 function viewProducts() {
+    function Table (product_name, price, stock_quantity) {
+        // this.dept_id = dept_id;
+        // this.item_id = item_id;
+        this.product_name = product_name;
+        this.price = price;
+        this.stock_quantity = stock_quantity;
+
+    };
+    var stuff = {};
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
         for (i in res) {
-            console.log("---------------------------")
-            console.log("PRODUCT ID:", res[i].item_id);
-            console.log("PRODUCT NAME:", res[i].product_name);
-            console.log("PRODUCT PRICE:", res[i].price);
-            console.log("QUANTITY AVAILABLE", res[i].stock_quantity);
+            var prod = new Table(res[i].product_name, res[i].price, res[i].stock_quantity);
+            stuff[parseInt(i) + 1] = prod;
+            // console.log("---------------------------")
+            // console.log("PRODUCT ID:", res[i].item_id);
+            // console.log("PRODUCT NAME:", res[i].product_name);
+            // console.log("PRODUCT PRICE:", res[i].price);
+            // console.log("QUANTITY AVAILABLE", res[i].stock_quantity);
         }
+        console.table(stuff)
         menu()
     });
 };
@@ -73,7 +85,11 @@ function lowInventory() {
                 console.log("PRODUCT ID:", res[i].item_id);
                 console.log("PRODUCT NAME:", res[i].product_name);
                 console.log("QUANTITY AVAILABLE", res[i].stock_quantity);
+                low++;
             }
+        }
+        if (low === 0) {
+            console.log("Nothing has low inventory");
         }
         menu()
     });
