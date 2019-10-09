@@ -44,14 +44,24 @@ function menu() {
 
 function viewSales() {
     var sql = "SELECT departments.dept_id, departments.department_name, departments.over_head_costs, products.product_sales FROM departments JOIN products ON departments.department_name=products.department_name"
-
+    function Table(department_name, over_head_costs, product_sales, total_profit) {
+        // this.dept_id = dept_id;
+        this.department_name = department_name;
+        this.over_head_costs = over_head_costs;
+        this.product_sales = product_sales;
+        this.total_profit = total_profit;
+    }
+    var stuff = {};
     connection.query(sql, function (err, res) {
         if (err) throw err;
-        console.log("department id  ||  department name  ||  overhead costs  ||  product sales  ||  total profit")
         for (i in res) {
             var profit = parseFloat(res[i].product_sales) - parseFloat(res[i].over_head_costs)
-            console.log(res[i].dept_id, " || ", res[i].department_name, " || ", res[i].over_head_costs, " || ", res[i].product_sales, " || ", profit)
+            var dept = new Table(res[i].department_name, res[i].over_head_costs, res[i].product_sales, profit);
+            // console.log(dept);
+            stuff[parseInt(i)+1] = dept;
         };
+        console.table(stuff)
         menu()
     });
 }
+
