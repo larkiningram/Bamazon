@@ -10,6 +10,7 @@ CREATE TABLE products (
     department_name VARCHAR(50) NULL,
     price INT NULL,
     stock_quantity INT NULL,
+    product_sales INT DEFAULT 0, 
     PRIMARY KEY(item_id)
 );
 
@@ -19,3 +20,19 @@ VALUE ("thing1", "place1", 1, 10), ("thing2", "place2", 2, 20), ("thing3", "plac
 ("thing7", "place7", 7, 70), ("thing8", "place8", 8, 80), ("thing9", "place9", 9, 90);
 
 SELECT * FROM products;
+
+CREATE TABLE departments (
+	dept_id INT NOT NULL AUTO_INCREMENT,
+    department_name VARCHAR(50) NULL,
+    over_head_costs INT NULL,
+    PRIMARY KEY(dept_id)
+);
+
+INSERT INTO departments (department_name, over_head_costs)
+VALUE ("place1", 10), ("place2", 20), ("place3", 30), 
+("place4",40), ( "place5", 50), ("place6", 60), 
+("place7", 70), ("place8", 80), ("place9",90);
+
+SELECT * FROM departments;
+
+
