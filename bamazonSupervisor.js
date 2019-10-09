@@ -35,6 +35,7 @@ function menu() {
         }
         else if (res.menu === "Create New Department") {
             createDept();
+
         }
         else if (res.menu === "Exit") {
             connection.end();
@@ -58,10 +59,29 @@ function viewSales() {
             var profit = parseFloat(res[i].product_sales) - parseFloat(res[i].over_head_costs)
             var dept = new Table(res[i].department_name, res[i].over_head_costs, res[i].product_sales, profit);
             // console.log(dept);
-            stuff[parseInt(i)+1] = dept;
+            stuff[parseInt(i) + 1] = dept;
         };
         console.table(stuff)
         menu()
     });
 }
 
+function createDept() {
+    inquirer.prompt([
+        {
+            messsage: "What department would you like to add?",
+            name: "name"
+        },
+        {
+            messsage: "What is the over head cost of this department?",
+            name: "cost"
+        }
+    ]).then(function (add) {
+        console.log(add.cost);
+        connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES ('" + add.name + "','" + add.cost + "')", function (err, resp) {
+                if (err) throw err;
+                console.log(resp.affectedRows + " items updated!\n");
+            });
+
+    });
+}
