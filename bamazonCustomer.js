@@ -56,6 +56,7 @@ function questions(res) {
                     chosen.stock_quantity = chosen.stock_quantity - ans.units;
                     var cost = parseInt(ans.units) * parseInt(chosen.price);
                     console.log("Total cost:", cost)
+                    updateSales(chosen, cost);
                     updateItems(chosen);
                 }
                 else {
@@ -68,6 +69,26 @@ function questions(res) {
         // read();
 
     })
+};
+
+function updateSales(chosen, cost) {
+    console.log("Updating your stock quantities...\n");
+    var query = connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+            {
+                product_sales: (parseFloat(cost) + parseFloat(chosen.product_sales))
+            },
+            {
+                item_id: parseFloat(chosen.item_id)
+            }
+        ],
+        function (err, resp) {
+            if (err) throw err;
+            console.log(resp.affectedRows + " items updated!\n");
+        }
+    );
+    console.log(query.sql);
 };
 
 function updateItems(chosen) {
