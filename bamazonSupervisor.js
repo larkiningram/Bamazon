@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
+// create variable with necessary information to conncect to server
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -15,12 +16,14 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
 });
 
+// open connection with server
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
     menu();
 });
 
+// function which displays a menu with commands for the user to choose from
 function menu() {
     inquirer.prompt([
         {
@@ -45,22 +48,27 @@ function menu() {
     })
 };
 
+// function which allows user to view a table with the sales records for each department
 function viewSales() {
+    // reads data from two tables (products and departments) and then joins them if their department names are the same
     var sql = "SELECT departments.dept_id, departments.department_name, departments.over_head_costs, products.product_sales FROM departments JOIN products ON departments.department_name=products.department_name"
+    
+    // create constructor for table
     function Table(department_name, over_head_costs, product_sales, total_profit) {
-        // this.dept_id = dept_id;
         this.department_name = department_name;
         this.over_head_costs = over_head_costs;
         this.product_sales = product_sales;
         this.total_profit = total_profit;
-    }
+    };
     var stuff = {};
     connection.query(sql, function (err, res) {
         if (err) throw err;
+        
+        // populates empty object stuff with product objects  
         for (i in res) {
+            // calculates profit for each department based on the product sales and overhead cost
             var profit = parseFloat(res[i].product_sales) - parseFloat(res[i].over_head_costs)
             var dept = new Table(res[i].department_name, res[i].over_head_costs, res[i].product_sales, profit);
-            // console.log(dept);
             stuff[parseInt(i) + 1] = dept;
         };
         console.table(stuff)
@@ -68,6 +76,7 @@ function viewSales() {
     });
 };
 
+// function which allows the user to create a new department and add it to the SQL database
 function createDept() {
     inquirer.prompt([
         {   
@@ -81,6 +90,7 @@ function createDept() {
             type:"input"
         }
     ]).then(function (add) {
+        // adds rows into departments table based on user input 
         connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES ('" + add.name + "','" + add.cost + "')", function (err, resp) {
             if (err) throw err;
             console.log(resp.affectedRows + " items updated!\n");
