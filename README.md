@@ -27,3 +27,7 @@ The third file in this repository, *bamazonSupervisor.js*, allows the user to ac
 Below is an example of the supervisor side of the application: 
 
 ![Supervisor](images/bam_super_ex.png)
+
+---
+
+This application utilized Javascript, Node.js (Inquirer, MySQL, and DotEnv).
