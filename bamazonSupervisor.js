@@ -70,13 +70,15 @@ function viewSales() {
 
 function createDept() {
     inquirer.prompt([
-        {
-            messsage: "What department would you like to add?",
-            name: "name"
+        {   
+            type:"input",
+            name: "asdf",
+            message: "What department would you like to add?"
         },
         {
-            messsage: "What is the over head cost of this department?",
-            name: "cost"
+            message: "What is the over head cost of this department?",
+            name: "cost",
+            type:"input"
         }
     ]).then(function (add) {
         connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES ('" + add.name + "','" + add.cost + "')", function (err, resp) {

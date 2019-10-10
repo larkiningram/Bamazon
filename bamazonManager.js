@@ -95,6 +95,43 @@ function lowInventory() {
     });
 };
 
+function addInventory() {
+    // console.log()
+    inquirer.prompt([
+        {
+            message: "Which product would you like to restock?",
+            name: "item", 
+            // type: "rawlist",
+
+        },
+        {
+            message: "What would you like the new stock quantity to be?",
+            name: "stock"
+        }
+    ]).then(function (add) {
+        var query = connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+                {
+                    stock_quantity: parseFloat(add.stock)
+                },
+                {
+                    product_name: (add.item)
+                }
+            ],
+            function (err, resp) {
+                if (err) throw err;
+                console.log(resp.affectedRows + " items updated!\n");
+                menu();
+            }
+        );
+        console.log(query.sql);
+
+    });
+
+
+};
+
 function addProduct() {
 
     inquirer.prompt([
@@ -122,41 +159,6 @@ function addProduct() {
                 console.log(resp.affectedRows + " items updated!\n");
                 menu();
             });
-
-    });
-
-
-};
-
-function addInventory() {
-    // console.log()
-    inquirer.prompt([
-        {
-            messsage: "Which product would you like to restock?",
-            name: "item"
-        },
-        {
-            messsage: "What would you like the new stock quantity to be?",
-            name: "stock"
-        }
-    ]).then(function (add) {
-        var query = connection.query(
-            "UPDATE products SET ? WHERE ?",
-            [
-                {
-                    stock_quantity: parseFloat(add.stock)
-                },
-                {
-                    product_name: (add.item)
-                }
-            ],
-            function (err, resp) {
-                if (err) throw err;
-                console.log(resp.affectedRows + " items updated!\n");
-                menu();
-            }
-        );
-        console.log(query.sql);
 
     });
 

@@ -22,9 +22,9 @@ connection.connect(function (err) {
 });
 
 function read() {
-    function Table (product_name, price) {
+    function Table (item_id, product_name, price) {
         // this.dept_id = dept_id;
-        // this.item_id = item_id;
+        this.item_id = item_id;
         this.product_name = product_name;
         this.price = price;
     };
@@ -34,12 +34,8 @@ function read() {
         if (err) throw err;
 
         for (i in res) {
-            var prod = new Table(res[i].product_name, res[i].price);
-            stuff[parseInt(i) + 1] = prod;
-            // console.log("---------------------------")
-            // console.log("PRODUCT ID:", res[i].item_id);
-            // console.log("PRODUCT NAME:", res[i].product_name);
-            // console.log("PRODUCT PRICE:", res[i].price);
+            var prod = new Table(res[i].item_id, res[i].product_name, res[i].price);
+            stuff[i] = prod;
         }
         console.table(stuff);
         questions(res)
