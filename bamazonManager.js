@@ -1,6 +1,10 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+
+// initialize variable to use in the low inventory function
 var low = 0;
+
+// create variable with necessary information to conncect to server
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -15,12 +19,14 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
 });
 
+// open connection with server
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
     menu();
 });
 
+// function which displays a menu with commands for the user to choose from
 function menu() {
     inquirer.prompt([
         {
@@ -48,34 +54,36 @@ function menu() {
     })
 };
 
+// function which allows user to view available products
 function viewProducts() {
-    function Table (product_name, price, stock_quantity) {
-        // this.dept_id = dept_id;
-        // this.item_id = item_id;
+    
+     // create constructor for table
+    function Table (item_id, product_name, price, stock_quantity) {
+        this.item_id = item_id;
         this.product_name = product_name;
         this.price = price;
         this.stock_quantity = stock_quantity;
 
     };
     var stuff = {};
+    
+    // reads data from database table called products
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
-
+        
+        // populates empty object stuff with product objects  
         for (i in res) {
-            var prod = new Table(res[i].product_name, res[i].price, res[i].stock_quantity);
-            stuff[parseInt(i) + 1] = prod;
-            // console.log("---------------------------")
-            // console.log("PRODUCT ID:", res[i].item_id);
-            // console.log("PRODUCT NAME:", res[i].product_name);
-            // console.log("PRODUCT PRICE:", res[i].price);
-            // console.log("QUANTITY AVAILABLE", res[i].stock_quantity);
+            var prod = new Table(res[i].item_id, res[i].product_name, res[i].price, res[i].stock_quantity);
+            stuff[i] = prod;
         }
         console.table(stuff)
         menu()
     });
 };
 
+// function which tells the user if there are any products with low inventory
 function lowInventory() {
+     // reads data from database table called products
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
@@ -95,20 +103,19 @@ function lowInventory() {
     });
 };
 
+// function which allows the user to add inventory for a certain product
 function addInventory() {
-    // console.log()
     inquirer.prompt([
         {
             message: "Which product would you like to restock?",
             name: "item", 
-            // type: "rawlist",
-
         },
         {
             message: "What would you like the new stock quantity to be?",
             name: "stock"
         }
     ]).then(function (add) {
+        // updates products based on user input
         var query = connection.query(
             "UPDATE products SET ? WHERE ?",
             [
@@ -132,8 +139,8 @@ function addInventory() {
 
 };
 
+// function which allows the user to add a product to the SQL database
 function addProduct() {
-
     inquirer.prompt([
         {
             message: "What would you like to add to the inventory?",
@@ -152,15 +159,12 @@ function addProduct() {
             name: "stock"
         }
     ]).then(function (add) {
-
+        // adds rows into products table based on user input 
         connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUE ('" + add.item + "','" + add.department + "'," + parseFloat(add.price) + "," + parseFloat(add.stock) + ")",
             function (err, resp) {
                 if (err) throw err;
                 console.log(resp.affectedRows + " items updated!\n");
                 menu();
             });
-
     });
-
-
 };
