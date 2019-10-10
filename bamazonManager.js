@@ -136,19 +136,19 @@ function addProduct() {
 
     inquirer.prompt([
         {
-            messsage: "What would you like to add to the inventory?",
+            message: "What would you like to add to the inventory?",
             name: "item"
         },
         {
-            messsage: "What department does it belong in?",
+            message: "What department does it belong in?",
             name: "department"
         },
         {
-            messsage: "What is the price for each unit of this product?",
+            message: "What is the price for each unit of this product?",
             name: "price"
         },
         {
-            messsage: "How many of these items would you like to add?",
+            message: "How many of these items would you like to add?",
             name: "stock"
         }
     ]).then(function (add) {
