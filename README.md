@@ -30,4 +30,4 @@ Below is an example of the supervisor side of the application:
 
 ---
 
-This application utilized Javascript, Node.js (Inquirer, MySQL, and DotEnv).
+This application used Javascript, Node.js (Inquirer, MySQL, and DotEnv).
